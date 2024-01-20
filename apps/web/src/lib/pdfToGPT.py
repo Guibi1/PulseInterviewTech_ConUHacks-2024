@@ -10,7 +10,7 @@ client = OpenAI(api_key="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")
 
 
 # Google Drive file URL
-file_url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+file_url = "https://writing.colostate.edu/guides/documents/resume/functionalsample.pdf"
 
 
 def get_text_from_pdf(file_url):
@@ -34,11 +34,11 @@ def getTextFromPdf(text):
         messages=[
             {
                 "role": "system",
-                "content": "Youre an helpful assistant that will help the"
+                "content": "Youre an helpful assistant that will create three interview questions based on the cv of the user. The user will input the cv as text and his desired position and you will analyse it to give the most appropriated questions. You will gi me three questions."
             },
             {
                 "role": "user",
-                "content": f"Write this five time : {text}"
+                "content": f"I wanna be a civil engineer : {text}"
             }
         ],
     )
