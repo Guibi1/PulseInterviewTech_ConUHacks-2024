@@ -1,9 +1,7 @@
 <script lang="ts">
-    import { superForm } from "sveltekit-superforms";
-    import Logo from "./Logo.svelte";
     import { uploadSchema } from "$lib/zod";
+    import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
-    import { onMount } from "svelte";
 
     export let data;
     let liveVideoPreviewRef: HTMLVideoElement;
