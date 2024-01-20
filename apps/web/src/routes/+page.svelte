@@ -1,69 +1,164 @@
 <script lang="ts">
     import { superForm } from "sveltekit-superforms";
     import Logo from "./Logo.svelte";
-    import { pdfUploadSchema } from "$lib/zod";
+    import { uploadSchema } from "$lib/zod";
     import { zodClient } from "sveltekit-superforms/adapters";
+    import { onMount } from "svelte";
 
     export let data;
+    let liveVideoPreviewRef: HTMLVideoElement;
+    let completedVideoPreviewSrc: string = "";
+    let recorder: MediaRecorder;
 
-    const { form, errors, constraints, message, enhance } = superForm(data.form, {
+    const { form, errors, message, enhance } = superForm(data.form, {
         SPA: true,
-        validators: zodClient(pdfUploadSchema),
-        async onSubmit({ formData }) {
-            const t = formData.get("pdf") as File;
-            console.log("🚀 ~ onSubmit ~ t:", t);
-            console.log("🚀 ~ onSubmit ~ formData:", formData);
-            fetch(data.uploadUrl, {
+        validators: zodClient(uploadSchema),
+        async onUpdate({ form }) {
+            if (!form.valid) return;
+            const cv = fetch(data.cvUploadUrl, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/octet-stream",
                 },
-                body: await t.arrayBuffer(),
-            })
-                .then((response) => response.text())
-                .then((data) => console.log(data))
-                .catch((error) => console.error("Error:", error));
+                body: await form.data.pdf.arrayBuffer(),
+            }).catch((error) => console.error("Error uploading CV:", error));
+
+            const video = fetch(data.videoUploadUrl, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/octet-stream",
+                },
+                body: await form.data.video.arrayBuffer(),
+            }).catch((error) => console.error("Error uploading video:", error));
+
+            await Promise.all([cv, video]);
+            console.log("SUCCESS");
         },
     });
 
     const onFileInput = (e: { currentTarget: HTMLInputElement }) =>
         ($form.pdf = e.currentTarget.files?.item(0) as File);
+
+    async function stopRecording() {
+        liveVideoPreviewRef.srcObject = null;
+        if (recorder) {
+            recorder.stop();
+            recorder.stream.getTracks().forEach((track) => track.stop());
+            recorder = recorder;
+        }
+    }
+
+    async function startRecording() {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true,
+        });
+
+        completedVideoPreviewSrc = "";
+        liveVideoPreviewRef.srcObject = stream;
+        recorder = new MediaRecorder(stream);
+        const data: Blob[] = [];
+
+        // Wait for the camera to start
+        await new Promise((resolve) => (liveVideoPreviewRef.onplaying = resolve));
+
+        // Handle recording event
+        const recording = new Promise((resolve, reject) => {
+            recorder.ondataavailable = (event) => data.push(event.data);
+            recorder.onstop = resolve;
+            recorder.onerror = reject;
+        });
+
+        // Adds a max recording time
+        const maxRecordingTime = setTimeout(stopRecording, 10_000);
+
+        // Start the recording and wait for it to finish
+        recorder.start();
+        await recording;
+        clearTimeout(maxRecordingTime);
+
+        try {
+            // Handle finished recording
+            $form.video = new File(data, "interview.webm", { type: "video/webm" });
+            completedVideoPreviewSrc = URL.createObjectURL($form.video);
+        } catch (e) {
+            console.error(e);
+        }
+    }
 </script>
 
-<div class="container mx-auto flex h-full items-center justify-center">
-    <form method="POST" enctype="multipart/form-data" use:enhance>
+<main class="container mx-auto flex h-full flex-col items-center justify-center gap-4">
+    <h1 class="h1">Test your interviewing skills</h1>
+
+    <form class="flex flex-col gap-4" method="POST" enctype="multipart/form-data" use:enhance>
         {#if $message}<h3>{$message}</h3>{/if}
 
-        <input
-            type="file"
-            name="pdf"
-            accept="application/pdf"
-            on:input={onFileInput}
-            aria-invalid={$errors.pdf ? "true" : undefined}
-            {...$constraints.pdf}
-        />
+        <label class="label">
+            <span> Curiculum Vitae </span>
 
-        <button type="submit" class="button variant-filled-primary">Submit</button>
+            <input
+                class={`input ${$errors.pdf ? "input-error" : ""}`}
+                type="file"
+                name="pdf"
+                accept="application/pdf"
+                on:input={onFileInput}
+                aria-invalid={$errors.pdf ? "true" : undefined}
+            />
+
+            {#if $errors.pdf}
+                <span class="text-error-500-400-token">{$errors.pdf?.at(0)}</span>
+            {/if}
+        </label>
+
+        <label class="label">
+            <span> Interview </span>
+
+            <div class={`input ${$errors.video ? "input-error" : ""}`}>
+                <div class="flex aspect-video h-[30rem] justify-center p-2">
+                    {#if completedVideoPreviewSrc}
+                        <!-- svelte-ignore a11y-media-has-caption -->
+                        <video
+                            class="h-full"
+                            src={completedVideoPreviewSrc}
+                            controls={!!completedVideoPreviewSrc}
+                        />
+                    {/if}
+
+                    <video
+                        class="h-full"
+                        hidden={!!completedVideoPreviewSrc}
+                        bind:this={liveVideoPreviewRef}
+                        autoplay
+                        muted
+                    />
+                </div>
+
+                <div class="mb-2 flex justify-center gap-4">
+                    <button
+                        on:click={startRecording}
+                        disabled={recorder?.state === "recording"}
+                        class="btn variant-filled"
+                        type="button"
+                    >
+                        Start recording
+                    </button>
+
+                    <button
+                        on:click={stopRecording}
+                        disabled={recorder?.state !== "recording"}
+                        class="btn variant-filled"
+                        type="button"
+                    >
+                        Stop
+                    </button>
+                </div>
+            </div>
+
+            {#if $errors.video}
+                <span class="text-error-500-400-token">{$errors.video?.at(0)}</span>
+            {/if}
+        </label>
+
+        <button type="submit" class="btn variant-filled-primary">Submit</button>
     </form>
-
-    <div class="flex flex-col items-center space-y-10 text-center">
-        <h2 class="h2">Welcome to Skeleton.</h2>
-        <Logo />
-        <!-- Animated Logo -->
-        <div class="flex justify-center space-x-2">
-            <a
-                class="btn variant-filled"
-                href="https://skeleton.dev/"
-                target="_blank"
-                rel="noreferrer"
-            >
-                Launch Documentation
-            </a>
-        </div>
-        <div class="space-y-2">
-            <p>Try editing the following:</p>
-            <p><code class="code">/src/routes/+layout.svelte</code></p>
-            <p><code class="code">/src/routes/+page.svelte</code></p>
-        </div>
-    </div>
-</div>
+</main>

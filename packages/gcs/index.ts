@@ -1,17 +1,15 @@
 import { Storage } from "@google-cloud/storage";
 
-// The ID of your GCS bucket
-const bucketName = "pulse-interview-upload";
+type BucketName = "pulse-interview-upload" | "pulse-interview-video";
 
-// Creates a client
 const storage = new Storage({
     credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS ?? "{}"),
 });
 
-export async function generateV4UploadSignedUrl(folder: string) {
+export async function generateV4UploadSignedUrl(bucket: BucketName) {
     const [url] = await storage
-        .bucket(bucketName)
-        .file(`${folder}/${Date.now()}-${generateRandomString(10)}`)
+        .bucket(bucket)
+        .file(`${Date.now()}-${generateRandomString(10)}`)
         .getSignedUrl({
             version: "v4",
             action: "write",
@@ -23,14 +21,19 @@ export async function generateV4UploadSignedUrl(folder: string) {
 }
 
 async function configureBucketCors() {
-    await storage.bucket(bucketName).setCorsConfiguration([
-        {
-            maxAgeSeconds: 3600,
-            method: ["PUT", "GET"],
-            origin: ["http://localhost:5173", "https://pulseinterview.tech"],
-            responseHeader: ["Content-Type"],
-        },
-    ]);
+    const options = {
+        maxAgeSeconds: 3600,
+        method: ["PUT", "GET"],
+        origin: ["http://localhost:5173", "https://pulseinterview.tech"],
+        responseHeader: ["Content-Type"],
+    };
+
+    await storage
+        .bucket("pulse-interview-upload" satisfies BucketName)
+        .setCorsConfiguration([options]);
+    await storage
+        .bucket("pulse-interview-video" satisfies BucketName)
+        .setCorsConfiguration([options]);
 }
 // configureBucketCors().catch(console.error);
 
