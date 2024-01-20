@@ -3,16 +3,15 @@ import { Storage } from "@google-cloud/storage";
 // The ID of your GCS bucket
 const bucketName = "pulse-interview-upload";
 
-// The full path of your file inside the GCS bucket, e.g. 'yourFile.jpg' or 'folder1/folder2/yourFile.jpg'
-const fileName = "cv/default.pdf";
-
 // Creates a client
-const storage = new Storage();
+const storage = new Storage({
+    credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS ?? "{}"),
+});
 
-export async function generateV4UploadSignedUrl() {
+export async function generateV4UploadSignedUrl(folder: string) {
     const [url] = await storage
         .bucket(bucketName)
-        .file(fileName)
+        .file(`${folder}/${Date.now()}-${generateRandomString(10)}`)
         .getSignedUrl({
             version: "v4",
             action: "write",
@@ -20,10 +19,29 @@ export async function generateV4UploadSignedUrl() {
             contentType: "application/octet-stream",
         });
 
-    console.log("Generated PUT signed URL:");
-    console.log(url);
-    console.log("You can use this URL with any user agent, for example:");
-    console.log("curl -X PUT -H 'Content-Type: application/octet-stream' " + `--upload-file my-file '${url}'`);
+    return url;
 }
 
-generateV4UploadSignedUrl().catch(console.error);
+async function configureBucketCors() {
+    await storage.bucket(bucketName).setCorsConfiguration([
+        {
+            maxAgeSeconds: 3600,
+            method: ["PUT", "GET"],
+            origin: ["http://localhost:5173", "https://pulseinterview.tech"],
+            responseHeader: ["Content-Type"],
+        },
+    ]);
+}
+// configureBucketCors().catch(console.error);
+
+function generateRandomString(length: number) {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const randomBytes = crypto.getRandomValues(new Uint8Array(length));
+
+    let result = "";
+    for (let i = 0; i < length; i++) {
+        result += charset.charAt(randomBytes[i] % charset.length);
+    }
+
+    return result;
+}
