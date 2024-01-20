@@ -2,6 +2,7 @@
     import "../app.postcss";
     import { AppShell, AppBar } from "@skeletonlabs/skeleton";
     import Logo from "./Logo.svelte";
+    import { signIn } from "@auth/sveltekit/client";
 </script>
 
 <AppShell>
@@ -13,6 +14,7 @@
             </div>
 
             <svelte:fragment slot="trail">
+                <button on:click={() => signIn("a0")}>Sign In with Auth0</button>
                 <a class="btn btn-sm variant-ghost-surface" href="/"> Take the interview </a>
                 <a class="btn btn-sm variant-ghost-surface" href="/generate-cv"> Generate a CV </a>
                 <a
