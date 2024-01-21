@@ -42,4 +42,9 @@ export async function getState(userID: string | null | undefined) {
     return state;
 }
 
+export async function resetState(userID: string | null | undefined) {
+    if (!userID) return null;
+    await db.update(usersTable).set({ step: "cv" }).where(eq(usersTable.id, userID));
+}
+
 export type UserData = typeof usersTable.$inferSelect;

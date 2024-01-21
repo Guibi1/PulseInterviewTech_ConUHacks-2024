@@ -25,7 +25,7 @@
             }).catch((error) => console.error("Error uploading video:", error));
 
             console.log("SUCCESS");
-            setTimeout(() => (window.location.href = "/loading"), 3000);
+            window.location.href = `/loading?from=${data.step}`;
         },
     });
 

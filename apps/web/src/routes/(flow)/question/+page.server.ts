@@ -17,10 +17,13 @@ export const load: PageServerLoad = async ({ locals }) => {
         three: { filename: state.videoThree, index: 2 },
     };
     const step = steps[state.step as keyof typeof steps];
+    if (!step) {
+        redirect(302, "/loading");
+    }
 
     const form = await superValidate(zod(videoUploadSchema), { allowFiles: true });
     const videoUpload = await generateV4UploadSignedUrl("pulse-interview-video", step.filename);
     const questions = await getQuestions(state.questionsFileName);
 
-    return { form, videoUpload, question: questions[step.index] };
+    return { form, videoUpload, question: questions[step.index], step: state.step };
 };

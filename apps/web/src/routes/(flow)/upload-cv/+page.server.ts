@@ -1,4 +1,4 @@
-import { getState } from "$lib/drizzle";
+import { getState, resetState } from "$lib/drizzle";
 import { cvUploadSchema } from "$lib/zod";
 import { redirect } from "@sveltejs/kit";
 import { generateV4UploadSignedUrl } from "gcs";
@@ -10,6 +10,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     const user = await locals.auth();
     const state = await getState(user?.user?.email);
     if (!state) redirect(302, "/");
+
+    if (state.step === "loading") {
+        redirect(302, "/loading");
+    }
+    if (state.step !== "cv") {
+        resetState(state.id);
+    }
 
     const form = await superValidate(zod(cvUploadSchema), { allowFiles: true });
     const cvUpload = await generateV4UploadSignedUrl("pulse-interview-upload", state.cvFileName);

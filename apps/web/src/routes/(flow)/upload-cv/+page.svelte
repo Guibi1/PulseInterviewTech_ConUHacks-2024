@@ -22,7 +22,7 @@
             }).catch((error) => console.error("Error uploading CV:", error));
 
             console.log("SUCESS");
-            setTimeout(() => (window.location.href = "/loading"), 3000);
+            window.location.href = "/loading?from=cv";
         },
     });
 
