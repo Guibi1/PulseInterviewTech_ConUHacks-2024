@@ -11,7 +11,7 @@
     let recorder: Promise<MediaRecorder>;
     let recording = false;
 
-    const { form, errors, message, enhance } = superForm(data.form, {
+    const { form, errors, submitting, enhance } = superForm(data.form, {
         SPA: true,
         validators: zodClient(videoUploadSchema),
         async onUpdate({ form }) {
@@ -125,7 +125,7 @@
         <div class="mb-2 flex justify-center gap-4">
             <button
                 on:click={startRecording}
-                disabled={recording}
+                disabled={recording || $submitting}
                 class="btn variant-ghost-tertiary"
                 type="button"
             >
@@ -134,7 +134,7 @@
 
             <button
                 on:click={stopRecording}
-                disabled={!recording}
+                disabled={!recording || $submitting}
                 class="btn variant-ghost-tertiary"
                 type="button"
             >
@@ -146,6 +146,8 @@
             <span class="text-error-500-400-token">{$errors.video?.at(0)}</span>
         {/if}
 
-        <button type="submit" class="btn btn-xl variant-ghost-primary">Next question</button>
+        <button type="submit" disabled={$submitting} class="btn btn-xl variant-ghost-primary"
+            >Next question</button
+        >
     </form>
 </main>
