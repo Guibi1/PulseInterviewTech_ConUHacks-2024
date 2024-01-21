@@ -43,19 +43,41 @@
 
         const page = pdfDoc.addPage();
         const { width, height } = page.getSize();
-        const fontSize = 12;
+        const fontSize = 14;
 
         // xy_translation
         let y_pos = height - 50;
         let x_padding = 50;
 
+        // Title
+        page.drawText("Curriculum Vitae", {
+            x: width/2 - 50,
+            y: y_pos,
+            size: 16,
+            font: timesRomanFont,
+            color: rgb(0, 0, 0),
+        });
+
+        y_pos = y_pos - 2 * fontSize;
+
+
         // Display info section
+
+        page.drawText("Contact Information", {
+            x: x_padding,
+            y: y_pos,
+            size: 14,
+            font: timesRomanFont,
+            color: rgb(0, 0, 0),
+        });
+        y_pos = y_pos - 7;
+
         const info = data.info;
         const infoText = `
-        Name: ${info.name}
-        Email: ${info.email}
-        Number: ${info.number}
-        Address: ${info.address}
+        ${info.name}
+        ${info.email}
+        ${info.number}
+        ${info.address}
     `;
 
         page.drawText(infoText, {
@@ -63,25 +85,35 @@
             y: y_pos,
             size: fontSize,
             font: timesRomanFont,
-            color: rgb(0, 0.53, 0.71),
+            color: rgb(0, 0, 0),
         });
-        y_pos = y_pos - 8 * fontSize;
+        y_pos = y_pos - 12 * fontSize;
 
         // Display work experience section
+
+        page.drawText("Work Experience", {
+            x: x_padding,
+            y: y_pos,
+            size: 14,
+            font: timesRomanFont,
+            color: rgb(0, 0, 0),
+        });
+        y_pos = y_pos - 7;
+
         const workExperience = data.workexperience;
         workExperience.forEach((exp) => {
             const expText = `
-        Title: ${exp.title}
-        Company: ${exp.company}
-        Period: ${exp.period}
-        Description: ${exp.description}
+            ${exp.title}
+            ${exp.company}
+            ${exp.period}
+            ${exp.description}
         `;
             page.drawText(expText, {
                 x: x_padding,
                 y: y_pos,
                 size: fontSize,
                 font: timesRomanFont,
-                color: rgb(0, 0.53, 0.71),
+                color: rgb(0, 0, 0),
             });
             y_pos -= 8 * fontSize;
         });
@@ -90,13 +122,13 @@
         // Display skills section
         const skills = data.skills;
         skills.forEach((skill) => {
-            const skillText = `         Skill: ${skill.name}, Rating: ${skill.rating}`;
+            const skillText = `Skill: ${skill.name}, Rating: ${skill.rating}`;
             page.drawText(skillText, {
                 x: x_padding,
                 y: y_pos,
                 size: fontSize,
                 font: timesRomanFont,
-                color: rgb(0, 0.53, 0.71),
+                color: rgb(0, 0, 0),
             });
             y_pos -= 3 * fontSize;
         });
@@ -105,13 +137,13 @@
         // Display languages section
         const languages = data.languages;
         languages.forEach((language) => {
-            const languageText = `      Language: ${language.name}, Rating: ${language.rating}`;
+            const languageText = `Language: ${language.name}, Rating: ${language.rating}`;
             page.drawText(languageText, {
                 x: x_padding,
                 y: y_pos,
                 size: fontSize,
                 font: timesRomanFont,
-                color: rgb(0, 0.53, 0.71),
+                color: rgb(0, 0, 0),
             });
             y_pos -= 6 * fontSize
         });
@@ -120,16 +152,16 @@
         const education = data.education;
         education.forEach((edu) => {
             const eduText = `
-            Institution: ${edu.institution}
-            Degree: ${edu.degree}
-            Year: ${edu.year}
+Institution: ${edu.institution}
+Degree: ${edu.degree}
+Year: ${edu.year}
         `;
             page.drawText(eduText, {
                 x: x_padding,
                 y: y_pos,
                 size: fontSize,
                 font: timesRomanFont,
-                color: rgb(0, 0.53, 0.71),
+                color: rgb(0, 0, 0),
             });
             y_pos -= 8 * fontSize;
         });
