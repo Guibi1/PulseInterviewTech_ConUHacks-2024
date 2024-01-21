@@ -2,6 +2,7 @@
     import { cvBuilderSchema } from "$lib/zod";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
+    import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
     export let data;
     const { form, errors, message, constraints, enhance } = superForm(data.form, {
@@ -10,7 +11,7 @@
         dataType: "json",
         async onUpdate({ form }) {
             if (!form.valid) return;
-
+            createPdf()
             console.log("SUCCESS");
         },
     });
@@ -20,6 +21,24 @@
     function add(section: Exclude<keyof typeof $form, "info">) {
         $form[section].push({} as any);
         $form[section] = $form[section] as any;
+    }
+
+    async function createPdf() {
+        const pdfDoc = await PDFDocument.create();
+        const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+
+        const page = pdfDoc.addPage();
+        const { width, height } = page.getSize();
+        const fontSize = 30;
+        page.drawText("Creating PDFs in JavaScript is awesome!", {
+            x: 50,
+            y: height - 4 * fontSize,
+            size: fontSize,
+            font: timesRomanFont,
+            color: rgb(0, 0.53, 0.71),
+        });
+
+        const pdfBytes = await pdfDoc.save();
     }
 </script>
 
