@@ -16,8 +16,6 @@
         },
     });
 
-    $: console.log($form);
-
     function add(section: Exclude<keyof typeof $form, "info">) {
         $form[section].push({} as any);
         $form[section] = $form[section] as any;
@@ -37,7 +35,7 @@
         }, 0);
     }
 
-    async function createPdf(data) {
+    async function createPdf(data: typeof $form) {
         const pdfDoc = await PDFDocument.create();
         const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
         const timesRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
