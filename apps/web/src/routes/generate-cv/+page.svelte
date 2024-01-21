@@ -40,6 +40,7 @@
     async function createPdf(data) {
         const pdfDoc = await PDFDocument.create();
         const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        const timesRomanBoldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
 
         const page = pdfDoc.addPage();
         const { width, height } = page.getSize();
@@ -51,15 +52,14 @@
 
         // Title
         page.drawText("Curriculum Vitae", {
-            x: width/2 - 50,
+            x: width / 2 - 50,
             y: y_pos,
             size: 16,
-            font: timesRomanFont,
+            font: timesRomanBoldFont,
             color: rgb(0, 0, 0),
         });
 
         y_pos = y_pos - 2 * fontSize;
-
 
         // Display info section
 
@@ -67,7 +67,7 @@
             x: x_padding,
             y: y_pos,
             size: 14,
-            font: timesRomanFont,
+            font: timesRomanBoldFont,
             color: rgb(0, 0, 0),
         });
         y_pos = y_pos - 7;
@@ -95,7 +95,7 @@
             x: x_padding,
             y: y_pos,
             size: 14,
-            font: timesRomanFont,
+            font: timesRomanBoldFont,
             color: rgb(0, 0, 0),
         });
         y_pos = y_pos - 7;
@@ -118,11 +118,20 @@
             y_pos -= 8 * fontSize;
         });
 
-        y_pos -= 3 * fontSize
+        y_pos -= 3 * fontSize;
         // Display skills section
+
+        page.drawText("Skills:", {
+            x: x_padding,
+            y: y_pos,
+            size: fontSize,
+            font: timesRomanBoldFont,
+            color: rgb(0, 0, 0),
+        });
+        y_pos -= 3 * fontSize;
         const skills = data.skills;
         skills.forEach((skill) => {
-            const skillText = `Skill: ${skill.name}, Rating: ${skill.rating}`;
+            const skillText = `${skill.name}, ${skill.rating}/5`;
             page.drawText(skillText, {
                 x: x_padding,
                 y: y_pos,
@@ -133,8 +142,16 @@
             y_pos -= 3 * fontSize;
         });
 
-        y_pos -= 3 * fontSize
+        y_pos -= 3 * fontSize;
         // Display languages section
+        page.drawText("Languages:", {
+            x: x_padding,
+            y: y_pos,
+            size: fontSize,
+            font: timesRomanBoldFont,
+            color: rgb(0, 0, 0),
+        });
+        y_pos -= 3 * fontSize;
         const languages = data.languages;
         languages.forEach((language) => {
             const languageText = `Language: ${language.name}, Rating: ${language.rating}`;
@@ -145,16 +162,27 @@
                 font: timesRomanFont,
                 color: rgb(0, 0, 0),
             });
-            y_pos -= 6 * fontSize
+            y_pos -= 6 * fontSize;
         });
 
         // Display education section
+        y_pos -= 3 * fontSize;
+        // Display languages section
+        page.drawText("Education:", {
+            x: x_padding,
+            y: y_pos,
+            size: fontSize,
+            font: timesRomanBoldFont,
+            color: rgb(0, 0, 0),
+        });
+        y_pos -= 3 * fontSize;
+
         const education = data.education;
         education.forEach((edu) => {
             const eduText = `
-Institution: ${edu.institution}
-Degree: ${edu.degree}
-Year: ${edu.year}
+            ${edu.institution}
+            ${edu.degree}
+            ${edu.year}
         `;
             page.drawText(eduText, {
                 x: x_padding,
