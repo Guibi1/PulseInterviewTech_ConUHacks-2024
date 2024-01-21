@@ -8,7 +8,7 @@
     export let data;
     let files: FileList;
 
-    const { form, errors, message, enhance } = superForm(data.form, {
+    const { form, errors, message, submitting, enhance } = superForm(data.form, {
         SPA: true,
         validators: zodClient(cvUploadSchema),
         async onUpdate({ form }) {
@@ -55,6 +55,7 @@
                 type="text"
                 bind:value={$form.desiredPosition}
                 aria-invalid={$errors.desiredPosition ? "true" : undefined}
+                disabled={$submitting}
             />
 
             {#if $errors.desiredPosition}
@@ -68,6 +69,7 @@
             type="file"
             name="pdf"
             accept="application/pdf"
+            disabled={$submitting}
             bind:files
             on:change={onChangeHandler}
             aria-invalid={$errors.pdf ? "true" : undefined}
@@ -89,6 +91,8 @@
             <span class="text-error-500-400-token">{$errors.pdf?.at(0)}</span>
         {/if}
 
-        <button type="submit" class="btn btn-xl variant-ghost-primary">Submit</button>
+        <button type="submit" disabled={$submitting} class="btn btn-xl variant-ghost-primary"
+            >Submit</button
+        >
     </form>
 </main>
