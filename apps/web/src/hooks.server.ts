@@ -16,7 +16,6 @@ const config: SvelteKitAuthConfig = {
         }) as Provider,
     ],
     secret: AUTH_KEY,
-    debug: true,
     session: {
         maxAge: 1800, // 30 mins
     },

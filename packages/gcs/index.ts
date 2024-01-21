@@ -20,6 +20,11 @@ export async function generateV4UploadSignedUrl(bucket: BucketName) {
     return url;
 }
 
+export async function getQuestions(fileName: string) {
+    const [file] = await storage.bucket("pulse-interview-questions").file(fileName).download();
+    return JSON.parse(JSON.parse(file.toString())).questions;
+}
+
 async function configureBucketCors() {
     const options = {
         maxAgeSeconds: 3600,
@@ -30,9 +35,6 @@ async function configureBucketCors() {
 
     await storage
         .bucket("pulse-interview-upload" satisfies BucketName)
-        .setCorsConfiguration([options]);
-    await storage
-        .bucket("pulse-interview-video" satisfies BucketName)
         .setCorsConfiguration([options]);
 }
 // configureBucketCors().catch(console.error);
