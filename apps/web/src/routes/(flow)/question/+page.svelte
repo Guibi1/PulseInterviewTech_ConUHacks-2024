@@ -1,13 +1,15 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { videoUploadSchema } from "$lib/zod";
+    import { onMount } from "svelte";
     import { superForm } from "sveltekit-superforms";
     import { zodClient } from "sveltekit-superforms/adapters";
 
     export let data;
     let liveVideoPreviewRef: HTMLVideoElement;
     let completedVideoPreviewSrc: string = "";
-    let recorder: MediaRecorder;
+    let recorder: Promise<MediaRecorder>;
+    let recording = false;
 
     const { form, errors, message, enhance } = superForm(data.form, {
         SPA: true,
@@ -23,50 +25,40 @@
             }).catch((error) => console.error("Error uploading video:", error));
 
             console.log("SUCCESS");
-            setTimeout(async () => {
-                await goto("/loading");
-            }, 1000);
+            setTimeout(() => (window.location.href = "/loading"), 2000);
         },
     });
 
     async function stopRecording() {
-        liveVideoPreviewRef.srcObject = null;
-        if (recorder) {
-            recorder.stop();
-            recorder.stream.getTracks().forEach((track) => track.stop());
-            recorder = recorder;
+        const rec = await recorder;
+        if (rec) {
+            rec.stop();
+            recording = false;
         }
     }
 
     async function startRecording() {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-        });
-
         completedVideoPreviewSrc = "";
-        liveVideoPreviewRef.srcObject = stream;
-        recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
         const data: Blob[] = [];
 
         // Wait for the camera to start
-        await new Promise((resolve) => (liveVideoPreviewRef.onplaying = resolve));
+        const rec = await recorder;
 
         // Handle recording event
-        const recording = new Promise((resolve, reject) => {
-            recorder.ondataavailable = (event) => data.push(event.data);
-            recorder.onstop = resolve;
-            recorder.onerror = reject;
+        const recorderEnd = new Promise((resolve, reject) => {
+            rec.ondataavailable = (event) => data.push(event.data);
+            rec.onstop = resolve;
+            rec.onerror = reject;
         });
 
         // Adds a max recording time
         const maxRecordingTime = setTimeout(stopRecording, 60_000);
 
         // Start the recording and wait for it to finish
-        recorder.start();
-        await recording;
+        rec.start();
+        recording = true;
+        await recorderEnd;
         clearTimeout(maxRecordingTime);
-
         try {
             // Handle finished recording
             $form.video = new File(data, "interview.webm", { type: "video/webm" });
@@ -75,6 +67,27 @@
             console.error(e);
         }
     }
+
+    onMount(() => {
+        recorder = navigator.mediaDevices
+            .getUserMedia({
+                video: true,
+                audio: true,
+            })
+            .then(async (stream) => {
+                liveVideoPreviewRef.srcObject = stream;
+                const rec = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp8,opus" });
+                await new Promise((res) => (liveVideoPreviewRef.onplaying = res));
+                await new Promise((res) => setTimeout(res, 200));
+                return rec;
+            });
+
+        return async () => {
+            liveVideoPreviewRef.srcObject = null;
+            await stopRecording();
+            (await recorder).stream.getTracks().forEach((track) => track.stop());
+        };
+    });
 </script>
 
 <main
@@ -111,7 +124,7 @@
                 <div class="mb-2 flex justify-center gap-4">
                     <button
                         on:click={startRecording}
-                        disabled={recorder?.state === "recording"}
+                        disabled={recording}
                         class="btn variant-filled"
                         type="button"
                     >
@@ -120,7 +133,7 @@
 
                     <button
                         on:click={stopRecording}
-                        disabled={recorder?.state !== "recording"}
+                        disabled={!recording}
                         class="btn variant-filled"
                         type="button"
                     >
