@@ -1,5 +1,6 @@
 import { getState } from "$lib/drizzle";
 import { redirect } from "@sveltejs/kit";
+import { getAnalysis } from "gcs";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -7,5 +8,11 @@ export const load: PageServerLoad = async ({ locals }) => {
     const state = await getState(user?.user?.email);
     if (!state) redirect(302, "/");
 
-    return { results: {} };
+    const res = [
+        await getAnalysis(state.videoOne),
+        await getAnalysis(state.videoTwo),
+        await getAnalysis(state.videoThree),
+    ];
+
+    return { results: res };
 };

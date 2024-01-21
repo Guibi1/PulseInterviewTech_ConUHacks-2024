@@ -3,7 +3,7 @@ import { z } from "zod";
 export const cvUploadSchema = z.object({
     pdf: z
         .custom<File>()
-        .refine((f) => f && f instanceof File, "Required.")
+        .refine((f) => f && f instanceof File, "Start by uploading a CV.")
         .refine((f) => f instanceof File && f.type === "application/pdf", "Must be a PDF.")
         .refine((f) => f instanceof File && f.size < 10_000_000, "Max 10Mb upload size."),
 });
@@ -11,7 +11,7 @@ export const cvUploadSchema = z.object({
 export const videoUploadSchema = z.object({
     video: z
         .custom<File>()
-        .refine((f) => f && f instanceof File, "Required.")
+        .refine((f) => f && f instanceof File, "Make sure to record a video first.")
         .refine((f) => f instanceof File && f.type.startsWith("video/"), "Must be a video.")
         .refine((f) => f instanceof File && f.size < 100_000_000, "Max 100Mb upload size."),
 });

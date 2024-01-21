@@ -26,7 +26,7 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <AppBar>
+        <AppBar border="border-b border-primary-300-600-token">
             <a slot="lead" class="flex items-center gap-2" href="/">
                 <Logo />
                 <strong class="text-xl uppercase">Pulse Interview</strong>
@@ -34,7 +34,7 @@
 
             <svelte:fragment slot="trail">
                 <a
-                    class="btn btn-sm variant-ghost-surface"
+                    class="btn btn-sm variant-ghost-secondary hidden md:block"
                     href="https://github.com/Guibi1/PulseInterviewTech_ConUHacks-2024"
                     target="_blank"
                     rel="noreferrer"
@@ -43,14 +43,14 @@
                 </a>
 
                 {#if !data.loggedIn}
-                    <button class="btn btn-sm variant-ghost-secondary" on:click={() => signIn("a0")}
+                    <button class="btn btn-sm variant-ghost-tertiary" on:click={() => signIn("a0")}
                         >Sign In with Auth0</button
                     >
                 {:else}
-                    <a class="btn btn-sm variant-ghost-surface" href="/upload-cv">
+                    <a class="btn btn-sm variant-ghost-primary" href="/upload-cv">
                         Take the interview
                     </a>
-                    <a class="btn btn-sm variant-ghost-surface" href="/generate-cv">
+                    <a class="btn btn-sm variant-ghost-primary" href="/generate-cv">
                         Generate a CV
                     </a>
                 {/if}
@@ -68,14 +68,14 @@
 </AppShell>
 
 <!-- popup -->
-<div class="card w-72 p-4 shadow-xl" data-popup="popupFeatured">
+<div class="card z-50 w-72 border p-4 shadow-xl" data-popup="popupFeatured">
     <div class="flex flex-col items-center gap-2">
         <p>Hello, {data.name}!</p>
 
-        <button class="btn btn-sm variant-ghost-secondary" on:click={() => signOut()}
+        <button class="btn btn-sm variant-ghost-tertiary" on:click={() => signOut()}
             >Sign Out</button
         >
     </div>
 
-    <div class="arrow bg-surface-100-800-token" />
+    <div class="arrow bg-surface-100-800-token border-l border-t" />
 </div>

@@ -25,7 +25,7 @@
             }).catch((error) => console.error("Error uploading video:", error));
 
             console.log("SUCCESS");
-            setTimeout(() => (window.location.href = "/loading"), 2000);
+            setTimeout(() => (window.location.href = "/loading"), 3000);
         },
     });
 
@@ -97,56 +97,55 @@
         {data.question}
     </h1>
 
-    <form class="flex flex-col gap-4" method="POST" enctype="multipart/form-data" use:enhance>
-        {#if $message}<h3>{$message}</h3>{/if}
-
-        <label class="label">
-            <div class={`input ${$errors.video ? "input-error" : ""}`}>
-                <div class="flex aspect-video h-[30rem] justify-center p-2">
-                    {#if completedVideoPreviewSrc}
-                        <!-- svelte-ignore a11y-media-has-caption -->
-                        <video
-                            class="h-full"
-                            src={completedVideoPreviewSrc}
-                            controls={!!completedVideoPreviewSrc}
-                        />
-                    {/if}
-
-                    <video
-                        class="h-full"
-                        hidden={!!completedVideoPreviewSrc}
-                        bind:this={liveVideoPreviewRef}
-                        autoplay
-                        muted
-                    />
-                </div>
-
-                <div class="mb-2 flex justify-center gap-4">
-                    <button
-                        on:click={startRecording}
-                        disabled={recording}
-                        class="btn variant-filled"
-                        type="button"
-                    >
-                        Start recording
-                    </button>
-
-                    <button
-                        on:click={stopRecording}
-                        disabled={!recording}
-                        class="btn variant-filled"
-                        type="button"
-                    >
-                        Stop
-                    </button>
-                </div>
-            </div>
-
-            {#if $errors.video}
-                <span class="text-error-500-400-token">{$errors.video?.at(0)}</span>
+    <form
+        class="flex flex-col items-center gap-4"
+        method="POST"
+        enctype="multipart/form-data"
+        use:enhance
+    >
+        <div class="h-[30rem]">
+            {#if completedVideoPreviewSrc}
+                <!-- svelte-ignore a11y-media-has-caption -->
+                <video
+                    class="variant-outline-secondary rounded-xl p-0.5 ring-2"
+                    src={completedVideoPreviewSrc}
+                    controls={!!completedVideoPreviewSrc}
+                />
             {/if}
-        </label>
 
-        <button type="submit" class="btn variant-filled-primary">Next question</button>
+            <video
+                class="variant-outline-secondary rounded-xl p-0.5 ring-2"
+                hidden={!!completedVideoPreviewSrc}
+                bind:this={liveVideoPreviewRef}
+                autoplay
+                muted
+            />
+        </div>
+
+        <div class="mb-2 flex justify-center gap-4">
+            <button
+                on:click={startRecording}
+                disabled={recording}
+                class="btn variant-ghost-tertiary"
+                type="button"
+            >
+                Start recording
+            </button>
+
+            <button
+                on:click={stopRecording}
+                disabled={!recording}
+                class="btn variant-ghost-tertiary"
+                type="button"
+            >
+                Stop
+            </button>
+        </div>
+
+        {#if $errors.video}
+            <span class="text-error-500-400-token">{$errors.video?.at(0)}</span>
+        {/if}
+
+        <button type="submit" class="btn btn-xl variant-ghost-primary">Next question</button>
     </form>
 </main>

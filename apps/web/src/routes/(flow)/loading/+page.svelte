@@ -3,7 +3,7 @@
     import { onMount } from "svelte";
 
     onMount(() => {
-        setInterval(() => invalidate("app:loading"), 1000);
+        setInterval(() => invalidate("app:loading"), 500);
     });
 </script>
 

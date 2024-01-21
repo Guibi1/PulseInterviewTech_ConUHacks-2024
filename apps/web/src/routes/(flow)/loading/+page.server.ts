@@ -8,7 +8,6 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
     const user = await locals.auth();
     const state = await getState(user?.user?.email);
     if (!state) redirect(302, "/");
-    console.log("🚀 ~ constload:PageServerLoad= ~ state:", state)
 
     if (state.step !== "loading") {
         const steps: Record<typeof state.step, string> = {

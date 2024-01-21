@@ -22,7 +22,7 @@
             }).catch((error) => console.error("Error uploading CV:", error));
 
             console.log("SUCESS");
-            setTimeout(() => (window.location.href = "/loading"), 1000);
+            setTimeout(() => (window.location.href = "/loading"), 3000);
         },
     });
 
@@ -31,13 +31,19 @@
     }
 </script>
 
-<main class="container mx-auto flex h-full flex-col items-center justify-center gap-4">
-    <h1 class="h1">Interview simulator</h1>
-    <form class="flex flex-col gap-4" method="POST" enctype="multipart/form-data" use:enhance>
+<main class="container mx-auto max-w-screen-md px-4 py-8">
+    <form
+        class="flex flex-col items-center gap-4"
+        method="POST"
+        enctype="multipart/form-data"
+        use:enhance
+    >
+        <h1 class="h1 pb-4">Interview simulator</h1>
+
         {#if $message}<h3>{$message}</h3>{/if}
 
         <FileDropzone
-            class={`input ${$errors.pdf ? "input-error" : ""}`}
+            class={`input ${$errors.pdf ? "input-error" : ""} bg-secondary-500/20`}
             id="cv-input"
             type="file"
             name="pdf"
@@ -45,13 +51,17 @@
             bind:files
             on:change={onChangeHandler}
             aria-invalid={$errors.pdf ? "true" : undefined}
+            border="border-secondary-400-500-token"
         >
-            <h2 class="h2 px-4" slot="message">Upload your CV as a pdf</h2>
-            <h4 class="h4" slot="meta">
+            <h2 class="h3 px-4" slot="message">Upload your CV as a pdf</h2>
+
+            <svelte:fragment slot="meta">
                 {#if $form.pdf}
-                    {files[0].name}
+                    <h4 class="h4 pt-4">
+                        {files[0].name}
+                    </h4>
                 {/if}
-            </h4>
+            </svelte:fragment>
         </FileDropzone>
         <a class="anchor" href="/generate-cv">Don't have a CV? Generate one here!</a>
 
@@ -59,6 +69,6 @@
             <span class="text-error-500-400-token">{$errors.pdf?.at(0)}</span>
         {/if}
 
-        <button type="submit" class="btn variant-filled-primary">Submit</button>
+        <button type="submit" class="btn btn-xl variant-ghost-primary">Submit</button>
     </form>
 </main>
