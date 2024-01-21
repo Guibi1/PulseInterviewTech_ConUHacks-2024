@@ -1,14 +1,5 @@
 {
   "name": "pulse-interview",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "push": "drizzle-kit push:mysql",
-    "studio": "drizzle-kit studio"
-  },
   "devDependencies": {
     "prettier": "^3.1.1",
     "prettier-plugin-organize-imports": "^3.2.4",
@@ -23,8 +14,20 @@
     "node": ">=18"
   },
   "packageManager": "bun@1.0.22",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "push": "drizzle-kit push:mysql",
+    "studio": "drizzle-kit studio"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@floating-ui/dom": "^1.5.4"
+  }
 }
