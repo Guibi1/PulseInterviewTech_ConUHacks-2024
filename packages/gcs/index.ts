@@ -30,6 +30,11 @@ export async function getAnalysis(fileName: string) {
     return JSON.parse(file.toString());
 }
 
+export async function getFrameData(fileName: string) {
+    const [file] = await storage.bucket("pulse-interview-framedata").file(fileName).download();
+    return JSON.parse(file.toString());
+}
+
 async function configureBucketCors() {
     const options = {
         maxAgeSeconds: 3600,

@@ -1,6 +1,6 @@
 import { getState } from "$lib/drizzle";
 import { redirect } from "@sveltejs/kit";
-import { getAnalysis } from "gcs";
+import { getAnalysis, getFrameData } from "gcs";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -14,5 +14,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         await getAnalysis(state.videoThree),
     ];
 
-    return { results: res };
+    return {
+        results: res,
+        filename: state.cvFileName,
+        appearence: await getFrameData(state.cvFileName),
+    };
 };
