@@ -39,6 +39,7 @@
         });
 
         const pdfBytes = await pdfDoc.save();
+        download(pdfBytes, "pdf-lib_creation_example.pdf", "application/pdf");
     }
 </script>
 
