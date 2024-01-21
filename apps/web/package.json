@@ -44,5 +44,9 @@
     "vite": "^5.0.3",
     "vite-plugin-tailwind-purgecss": "0.2.0"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@planetscale/database": "^1.14.0",
+    "drizzle-orm": "^0.29.3"
+  }
 }

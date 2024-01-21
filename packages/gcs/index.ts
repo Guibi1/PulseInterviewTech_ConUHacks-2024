@@ -6,10 +6,10 @@ const storage = new Storage({
     credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS ?? "{}"),
 });
 
-export async function generateV4UploadSignedUrl(bucket: BucketName) {
+export async function generateV4UploadSignedUrl(bucket: BucketName, filename: string) {
     const [url] = await storage
         .bucket(bucket)
-        .file(`${Date.now()}-${generateRandomString(10)}`)
+        .file(filename)
         .getSignedUrl({
             version: "v4",
             action: "write",
@@ -17,7 +17,7 @@ export async function generateV4UploadSignedUrl(bucket: BucketName) {
             contentType: "application/octet-stream",
         });
 
-    return url;
+    return { url, filename };
 }
 
 export async function getQuestions(fileName: string) {
@@ -39,7 +39,7 @@ async function configureBucketCors() {
 }
 // configureBucketCors().catch(console.error);
 
-function generateRandomString(length: number) {
+export function generateRandomString(length: number) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     const randomBytes = crypto.getRandomValues(new Uint8Array(length));
 
@@ -48,5 +48,5 @@ function generateRandomString(length: number) {
         result += charset.charAt(randomBytes[i] % charset.length);
     }
 
-    return result;
+    return `${Date.now()}-${result}`;
 }
