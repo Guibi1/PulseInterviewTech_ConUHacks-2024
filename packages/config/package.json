@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "exports": {
-    "base.js": "./tsconfig.json",
+    "tsconfig.json": "./tsconfig.json",
     "eslintrc.cjs": "./.eslintrc.cjs"
   }
 }
