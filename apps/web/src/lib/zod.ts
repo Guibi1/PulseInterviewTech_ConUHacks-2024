@@ -6,6 +6,7 @@ export const cvUploadSchema = z.object({
         .refine((f) => f && f instanceof File, "Start by uploading a CV.")
         .refine((f) => f instanceof File && f.type === "application/pdf", "Must be a PDF.")
         .refine((f) => f instanceof File && f.size < 10_000_000, "Max 10Mb upload size."),
+    desiredPosition: z.string().min(5),
 });
 
 export const videoUploadSchema = z.object({

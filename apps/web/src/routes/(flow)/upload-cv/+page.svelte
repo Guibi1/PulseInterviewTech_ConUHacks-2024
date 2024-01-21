@@ -21,7 +21,12 @@
                 body: await form.data.pdf.arrayBuffer(),
             }).catch((error) => console.error("Error uploading CV:", error));
 
-            console.log("SUCESS");
+            await fetch("/upload-cv", {
+                method: "POST",
+                body: form.data.desiredPosition,
+            }).catch((error) => console.error("Error uploading posting position:", error));
+
+            console.log("SUCCESS");
             window.location.href = "/loading?from=cv";
         },
     });
@@ -41,6 +46,21 @@
         <h1 class="h1 pb-4">Interview simulator</h1>
 
         {#if $message}<h3>{$message}</h3>{/if}
+
+        <label class="label">
+            <span> Desired Position </span>
+
+            <input
+                class={`input ${$errors.desiredPosition ? "input-error" : ""}`}
+                type="text"
+                bind:value={$form.desiredPosition}
+                aria-invalid={$errors.desiredPosition ? "true" : undefined}
+            />
+
+            {#if $errors.desiredPosition}
+                <span class="text-error-500-400-token">{$errors.desiredPosition.at(0)}</span>
+            {/if}
+        </label>
 
         <FileDropzone
             class={`input ${$errors.pdf ? "input-error" : ""} bg-secondary-500/20`}

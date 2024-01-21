@@ -5,6 +5,7 @@ export const usersTable = mysqlTable(
     {
         id: varchar("id", { length: 60 }).primaryKey(),
         cvFileName: varchar("cv_file", { length: 128 }).notNull(),
+        desiredPosition: varchar("desired_position", { length: 256 }).notNull(),
         questionsFileName: varchar("questions_file", { length: 128 }).notNull(),
         videoOne: varchar("vid_one_file", { length: 128 }).notNull(),
         videoTwo: varchar("vid_two_file", { length: 128 }).notNull(),

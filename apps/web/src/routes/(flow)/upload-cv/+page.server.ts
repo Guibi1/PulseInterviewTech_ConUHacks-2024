@@ -18,8 +18,9 @@ export const load: PageServerLoad = async ({ locals }) => {
         resetState(state.id);
     }
 
-    const form = await superValidate(zod(cvUploadSchema), { allowFiles: true });
     const cvUpload = await generateV4UploadSignedUrl("pulse-interview-upload", state.cvFileName);
+    const form = await superValidate(zod(cvUploadSchema), { allowFiles: true });
+    form.data.desiredPosition = state.desiredPosition;
 
     return { form, cvUpload };
 };
