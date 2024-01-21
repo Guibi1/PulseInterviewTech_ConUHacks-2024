@@ -22,7 +22,7 @@ export async function generateV4UploadSignedUrl(bucket: BucketName, filename: st
 
 export async function getQuestions(fileName: string) {
     const [file] = await storage.bucket("pulse-interview-questions").file(fileName).download();
-    return JSON.parse(JSON.parse(file.toString())).questions;
+    return JSON.parse(file.toString()).questions;
 }
 
 async function configureBucketCors() {

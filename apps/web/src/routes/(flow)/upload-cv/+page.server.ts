@@ -8,15 +8,8 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
     const user = await locals.auth();
-    // try {
-    //     createState(user?.user?.email ?? "");
-    // } catch (e) {
-    //     console.log("🚀 ~ constload:PageServerLoad= ~ catch:", e);
-    // }
-
     const state = await getState(user?.user?.email);
-    console.log("🚀 ~ constload:PageServerLoad= ~ state:", state);
-    if (!state) redirect(304, "/");
+    if (!state) redirect(302, "/");
 
     const form = await superValidate(zod(cvUploadSchema), { allowFiles: true });
     const cvUpload = await generateV4UploadSignedUrl("pulse-interview-upload", state.cvFileName);

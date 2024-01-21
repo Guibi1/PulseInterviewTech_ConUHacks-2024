@@ -22,9 +22,10 @@
                 body: await form.data.video.arrayBuffer(),
             }).catch((error) => console.error("Error uploading video:", error));
 
-            console.log("SUCCESS", data.nextUrl);
-            completedVideoPreviewSrc = "";
-            await goto(data.nextUrl).catch(console.log);
+            console.log("SUCCESS");
+            setTimeout(async () => {
+                await goto("/loading");
+            }, 1000);
         },
     });
 
@@ -45,7 +46,7 @@
 
         completedVideoPreviewSrc = "";
         liveVideoPreviewRef.srcObject = stream;
-        recorder = new MediaRecorder(stream);
+        recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
         const data: Blob[] = [];
 
         // Wait for the camera to start
@@ -59,7 +60,7 @@
         });
 
         // Adds a max recording time
-        const maxRecordingTime = setTimeout(stopRecording, 10_000);
+        const maxRecordingTime = setTimeout(stopRecording, 60_000);
 
         // Start the recording and wait for it to finish
         recorder.start();

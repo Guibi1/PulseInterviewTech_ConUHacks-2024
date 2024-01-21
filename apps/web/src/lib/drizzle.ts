@@ -34,7 +34,12 @@ export async function getState(userID: string | null | undefined) {
     if (!userID) return null;
 
     const res = await db.select().from(usersTable).where(eq(usersTable.id, userID)).limit(1);
-    return res.at(0) ?? null;
+    const state = res.at(0) ?? null;
+    if (!state) {
+        await createState(userID);
+        return getState(userID);
+    }
+    return state;
 }
 
 export type UserData = typeof usersTable.$inferSelect;

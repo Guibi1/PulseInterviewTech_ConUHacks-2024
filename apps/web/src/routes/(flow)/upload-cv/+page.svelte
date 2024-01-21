@@ -20,7 +20,9 @@
             }).catch((error) => console.error("Error uploading CV:", error));
 
             console.log("SUCESS");
-            setTimeout(() => goto("/loading"), 1000);
+            setTimeout(async () => {
+                await goto("/loading");
+            }, 1000);
         },
     });
 

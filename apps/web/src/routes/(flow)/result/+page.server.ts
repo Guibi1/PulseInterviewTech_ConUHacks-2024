@@ -5,7 +5,7 @@ import type { PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ({ locals }) => {
     const user = await locals.auth();
     const state = await getState(user?.user?.email);
-    if (!state) redirect(304, "/");
+    if (!state) redirect(302, "/");
 
     return { results: {} };
 };

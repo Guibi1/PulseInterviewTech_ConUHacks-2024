@@ -7,9 +7,7 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
 
     const user = await locals.auth();
     const state = await getState(user?.user?.email);
-    if (!state) redirect(304, "/");
-
-    console.log("🚀 ~ constload:PageServerLoad= ~ state:", state);
+    if (!state) redirect(302, "/");
 
     if (state.step !== "loading") {
         const steps: Record<typeof state.step, string> = {
@@ -20,7 +18,7 @@ export const load: PageServerLoad = async ({ locals, depends }) => {
             result: "/result",
         };
 
-        redirect(304, steps[state.step]);
+        redirect(302, steps[state.step]);
     }
 
     return {};
