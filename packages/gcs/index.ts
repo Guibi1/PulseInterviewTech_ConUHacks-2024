@@ -31,8 +31,12 @@ export async function getAnalysis(fileName: string) {
 }
 
 export async function getFrameData(fileName: string) {
-    const [file] = await storage.bucket("pulse-interview-framedata").file(fileName).download();
-    return JSON.parse(file.toString());
+    try {
+        const [file] = await storage.bucket("pulse-interview-framedata").file(fileName).download();
+        return JSON.parse(file.toString());
+    } catch {
+        return null;
+    }
 }
 
 async function configureBucketCors() {

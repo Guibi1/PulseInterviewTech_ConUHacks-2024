@@ -25,9 +25,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "icons": "^1.0.0",
-    "pdf-lib": "^1.17.1"
-  }
+  ]
 }

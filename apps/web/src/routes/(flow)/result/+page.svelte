@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Accordion, AccordionItem, Ratings } from "@skeletonlabs/skeleton";
+    import { Accordion, AccordionItem, ProgressRadial, Ratings } from "@skeletonlabs/skeleton";
 
     export let data;
 </script>
@@ -71,26 +71,34 @@
                 <div class="flex flex-col items-stretch gap-4">
                     <span class="text-center text-2xl">Appearance</span>
 
-                    <Ratings text="text-4xl" value={data.appearence.rating} max={5}>
-                        <svelte:fragment slot="empty">☆</svelte:fragment>
-                        <svelte:fragment slot="full">⭐</svelte:fragment>
-                    </Ratings>
+                    {#if data.appearence}
+                        <Ratings text="text-4xl" value={data.appearence.rating} max={5}>
+                            <svelte:fragment slot="empty">☆</svelte:fragment>
+                            <svelte:fragment slot="full">⭐</svelte:fragment>
+                        </Ratings>
 
-                    <div class="mdmx-16 mt-4 grid gap-16 md:grid-cols-2">
-                        <div
-                            class="variant-outline-secondary card flex flex-col items-center gap-2 p-4 px-8 ring-2"
-                        >
-                            <span class="text-xl">Strengths</span>
-                            <p class="p text-justify">{data.appearence.comment.positive}</p>
-                        </div>
+                        <div class="mdmx-16 mt-4 grid gap-16 md:grid-cols-2">
+                            <div
+                                class="variant-outline-secondary card flex flex-col items-center gap-2 p-4 px-8 ring-2"
+                            >
+                                <span class="text-xl">Strengths</span>
+                                <p class="p text-justify">{data.appearence.comment.positive}</p>
+                            </div>
 
-                        <div
-                            class="variant-outline-secondary card flex flex-col items-center gap-2 p-4 px-8 ring-2"
-                        >
-                            <span class="text-xl">Ameliorations to consider</span>
-                            <p class="p text-justify">{data.appearence.comment.negative}</p>
+                            <div
+                                class="variant-outline-secondary card flex flex-col items-center gap-2 p-4 px-8 ring-2"
+                            >
+                                <span class="text-xl">Ameliorations to consider</span>
+                                <p class="p text-justify">{data.appearence.comment.negative}</p>
+                            </div>
                         </div>
-                    </div>
+                    {:else}
+                        <ProgressRadial
+                            value={undefined}
+                            meter="stroke-primary-600 dark:stroke-primary-400"
+                        />
+                        <span class="text-center"> Refresh in a bit to see the results </span>
+                    {/if}
                 </div>
             </div>
         </AccordionItem>
