@@ -11,7 +11,7 @@
         dataType: "json",
         async onUpdate({ form }) {
             if (!form.valid) return;
-            createPdf()
+            createPdf(form.data);
             console.log("SUCCESS");
         },
     });
@@ -23,19 +23,115 @@
         $form[section] = $form[section] as any;
     }
 
-    async function createPdf() {
+    function download(data: BlobPart | Uint8Array, filename: string, type: string) {
+        const file = new Blob([data], { type: type });
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    async function createPdf(data) {
         const pdfDoc = await PDFDocument.create();
         const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
 
         const page = pdfDoc.addPage();
         const { width, height } = page.getSize();
-        const fontSize = 30;
-        page.drawText("Creating PDFs in JavaScript is awesome!", {
-            x: 50,
-            y: height - 4 * fontSize,
+        const fontSize = 12;
+
+        // xy_translation
+        let y_pos = height - 50;
+        let x_padding = 50;
+
+        // Display info section
+        const info = data.info;
+        const infoText = `
+        Name: ${info.name}
+        Email: ${info.email}
+        Number: ${info.number}
+        Address: ${info.address}
+    `;
+
+        page.drawText(infoText, {
+            x: x_padding,
+            y: y_pos,
             size: fontSize,
             font: timesRomanFont,
             color: rgb(0, 0.53, 0.71),
+        });
+        y_pos = y_pos - 8 * fontSize;
+
+        // Display work experience section
+        const workExperience = data.workexperience;
+        workExperience.forEach((exp) => {
+            const expText = `
+        Title: ${exp.title}
+        Company: ${exp.company}
+        Period: ${exp.period}
+        Description: ${exp.description}
+        `;
+            page.drawText(expText, {
+                x: x_padding,
+                y: y_pos,
+                size: fontSize,
+                font: timesRomanFont,
+                color: rgb(0, 0.53, 0.71),
+            });
+            y_pos -= 8 * fontSize;
+        });
+
+        y_pos -= 3 * fontSize
+        // Display skills section
+        const skills = data.skills;
+        skills.forEach((skill) => {
+            const skillText = `         Skill: ${skill.name}, Rating: ${skill.rating}`;
+            page.drawText(skillText, {
+                x: x_padding,
+                y: y_pos,
+                size: fontSize,
+                font: timesRomanFont,
+                color: rgb(0, 0.53, 0.71),
+            });
+            y_pos -= 3 * fontSize;
+        });
+
+        y_pos -= 3 * fontSize
+        // Display languages section
+        const languages = data.languages;
+        languages.forEach((language) => {
+            const languageText = `      Language: ${language.name}, Rating: ${language.rating}`;
+            page.drawText(languageText, {
+                x: x_padding,
+                y: y_pos,
+                size: fontSize,
+                font: timesRomanFont,
+                color: rgb(0, 0.53, 0.71),
+            });
+            y_pos -= 6 * fontSize
+        });
+
+        // Display education section
+        const education = data.education;
+        education.forEach((edu) => {
+            const eduText = `
+            Institution: ${edu.institution}
+            Degree: ${edu.degree}
+            Year: ${edu.year}
+        `;
+            page.drawText(eduText, {
+                x: x_padding,
+                y: y_pos,
+                size: fontSize,
+                font: timesRomanFont,
+                color: rgb(0, 0.53, 0.71),
+            });
+            y_pos -= 8 * fontSize;
         });
 
         const pdfBytes = await pdfDoc.save();
