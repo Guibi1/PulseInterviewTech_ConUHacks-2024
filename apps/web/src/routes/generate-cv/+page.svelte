@@ -162,11 +162,9 @@
                 font: timesRomanFont,
                 color: rgb(0, 0, 0),
             });
-            y_pos -= 6 * fontSize;
+            y_pos -= 3 * fontSize;
         });
 
-        // Display education section
-        y_pos -= 3 * fontSize;
         // Display languages section
         page.drawText("Education:", {
             x: x_padding,
@@ -175,7 +173,7 @@
             font: timesRomanBoldFont,
             color: rgb(0, 0, 0),
         });
-        y_pos -= 3 * fontSize;
+        y_pos -= fontSize;
 
         const education = data.education;
         education.forEach((edu) => {
