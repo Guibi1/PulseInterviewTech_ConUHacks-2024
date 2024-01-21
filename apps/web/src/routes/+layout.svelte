@@ -29,7 +29,9 @@
         <AppBar border="border-b border-primary-300-600-token">
             <a slot="lead" class="flex items-center gap-2" href="/">
                 <Logo />
-                <strong class="text-xl uppercase">Pulse Interview</strong>
+                <strong class="text-xl uppercase"
+                    >Pulse Interview<small class="text-sm">.tech</small></strong
+                >
             </a>
 
             <svelte:fragment slot="trail">
