@@ -1,5 +1,6 @@
+# PulseInterview
 
-# PulseInterview.tech: Revolutionizing Interview Preparation
+Revolutionizing Interview Preparation with retroactive feedback
 
 ## Inspiration 😋
 
